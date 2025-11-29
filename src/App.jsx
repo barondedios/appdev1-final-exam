@@ -1,35 +1,35 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./styles/main.css";
+import "./styles/corner.css";
+import useTodos from "./hooks/useTodos";
+import useTheme from "./hooks/useTheme";
+import TodoInput from "./components/TodoInput";
+import TodoList from "./components/TodoList";
+import ThemeSelector from "./components/ThemeSelector";
+import Clock from "./components/Clock";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const { todos, addTodo, toggleTodo, deleteTodo } = useTodos();
+  const { theme, setTheme } = useTheme();
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div id="header">
+        <ThemeSelector setTheme={setTheme} />
+        <h1 id="title">Just do it.<div id="border"></div></h1>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
 
-export default App
+      <div id="form">
+        <TodoInput addTodo={addTodo} theme={theme} />
+      </div>
+
+      <Clock />
+
+      <TodoList
+        todos={todos}
+        toggleTodo={toggleTodo}
+        deleteTodo={deleteTodo}
+        theme={theme}
+      />
+    </>
+  );
+}
