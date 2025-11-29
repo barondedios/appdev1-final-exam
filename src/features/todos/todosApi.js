@@ -1,23 +1,14 @@
 import axios from "axios";
 
-const BASE_URL = "https://your-api-endpoint.com/todos"; // replace with your API
+// Base URL can be an env variable if needed
+const BASE_URL = "https://jsonplaceholder.typicode.com";
 
-export const fetchTodosAPI = async () => {
-  const response = await axios.get(BASE_URL);
-  return response.data;
-};
-
-export const addTodoAPI = async (todo) => {
-  const response = await axios.post(BASE_URL, todo);
-  return response.data;
-};
-
-export const updateTodoAPI = async (id, updatedTodo) => {
-  const response = await axios.put(`${BASE_URL}/${id}`, updatedTodo);
-  return response.data;
-};
-
-export const deleteTodoAPI = async (id) => {
-  const response = await axios.delete(`${BASE_URL}/${id}`);
-  return response.data;
+export const getTodos = async (limit = 10) => {
+  const res = await axios.get(`${BASE_URL}/todos?_limit=${limit}`);
+  // Map to your app format
+  return res.data.map(todo => ({
+    id: todo.id,
+    text: todo.title,
+    completed: todo.completed,
+  }));
 };

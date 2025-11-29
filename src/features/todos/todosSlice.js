@@ -1,47 +1,31 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { getTodos } from "./todosApi";
 
-// Fetch todos from API
-export const fetchTodos = createAsyncThunk(
-  "todos/fetchTodos",
-  async () => {
-    const response = await axios.get(import.meta.env.VITE_TODOS_URL);
-    return response.data.slice(0, 3); // Limit to first 20 todos
-  }
-);
+// Async thunk to fetch todos from API
+export const fetchTodos = createAsyncThunk("todos/fetchTodos", async () => {
+  const todos = await getTodos(5); // limit to 5 or more
+  return todos;
+});
 
 const todosSlice = createSlice({
   name: "todos",
-  initialState: {
-    items: [],
-    status: "idle",
-    error: null,
-  },
+  initialState: [],
   reducers: {
     addTodo: (state, action) => {
-      state.items.push(action.payload);
+      state.push(action.payload);
     },
     toggleTodo: (state, action) => {
-      const todo = state.items.find((t) => t.id === action.payload);
+      const todo = state.find(t => t.id === action.payload);
       if (todo) todo.completed = !todo.completed;
     },
     deleteTodo: (state, action) => {
-      state.items = state.items.filter((t) => t.id !== action.payload);
+      return state.filter(t => t.id !== action.payload);
     },
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchTodos.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(fetchTodos.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.items = action.payload;
-      })
-      .addCase(fetchTodos.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      });
+  extraReducers: builder => {
+    builder.addCase(fetchTodos.fulfilled, (state, action) => {
+      return action.payload;
+    });
   },
 });
 
